@@ -3,8 +3,229 @@
   <head>
     <title>Título da página</title>
     <meta charset="utf-8">
-<script src="https://raw.githubusercontent.com/LuficerHell/daypages/master/script.js"></script>
-<link rel="stylesheet" href="https://raw.githubusercontent.com/LuficerHell/daypages/master/styles.css">
+<script>/*
+ * Star Wars opening crawl from 1977
+ * 
+ * I freaking love Star Wars, but could not find
+ * a web version of the original opening crawl from 1977.
+ * So I created this one.
+ *
+ * I wrote an article where I explain how this works:
+ * http://timpietrusky.com/star-wars-opening-crawl-from-1977
+ * 
+ * Watch the Start Wars opening crawl on YouTube.
+ * https://www.youtube.com/watch?v=7jK-jZo6xjY
+ * 
+ * Stuff I used:
+ * - CSS (animation, transform)
+ * - HTML audio (the opening theme)
+ * - SVG (the Star Wars logo from wikimedia.org)
+ *   http://commons.wikimedia.org/wiki/File:Star_Wars_Logo.svg
+ * - JavaScript (to sync the animation/audio)
+ *
+ * Thanks to Craig Buckler for his amazing article 
+ * which helped me to create this remake of the Star Wars opening crawl. 
+ * http://www.sitepoint.com/css3-starwars-scrolling-text/ 
+ *
+ * Sound copyright by The Walt Disney Company.
+ * 
+ *
+ * 2013 by Tim Pietrusky
+ * timpietrusky.com
+ * 
+ */
+StarWars = (function() {
+  
+  /* 
+   * Constructor
+   */
+  function StarWars(args) {
+    // Context wrapper
+    this.el = $(args.el);
+    
+    // Audio to play the opening crawl
+    this.audio = this.el.find('audio').get(0);
+    
+    // Start the animation
+    this.start = this.el.find('.start');
+    
+    // The animation wrapper
+    this.animation = this.el.find('.animation');
+    
+    // Remove animation and shows the start screen
+    this.reset();
+
+    // Start the animation on click
+    this.start.bind('click', $.proxy(function() {
+      this.start.hide();
+      this.audio.play();
+      this.el.append(this.animation);
+    }, this));
+    
+    // Reset the animation and shows the start screen
+    $(this.audio).bind('ended', $.proxy(function() {
+      this.audio.currentTime = 0;
+      this.reset();
+    }, this));
+  }
+  
+  /*
+   * Resets the animation and shows the start screen.
+   */
+  StarWars.prototype.reset = function() {
+    this.start.show();
+    this.cloned = this.animation.clone(true);
+    this.animation.remove();
+    this.animation = this.cloned;
+  };
+
+  return StarWars;
+})();
+
+new StarWars({
+  el : '.starwars'
+});
+	  </script>
+	  <style>@import "compass/css3";
+
+@import url(https://fonts.googleapis.com/css?family=News+Cycle:400,700);
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font: 700 1em "News Cycle", sans-serif;
+  letter-spacing:.15em;
+	color: #ff6;
+	background: #000;
+	overflow: hidden;
+  margin: 0;
+}
+
+.starwars {
+  
+  section {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    z-index: 1;
+  } 
+
+  .start {
+    font-size: 200%;
+    $start-width: 14em;
+    width: $start-width;
+    margin: -4em 0 0 (- $start-width / 2);
+    text-align: center;
+    cursor: pointer;
+    
+    span {
+      color: rgb(75, 213, 238); 
+    }
+  }    
+  
+  .intro {
+    $intro-width: 15em;
+  	width: $intro-width;
+    margin: 0 0 0 (- $intro-width / 2);
+	  font-size: 200%;
+	  font-weight: 400;
+  	color: rgb(75, 213, 238);
+    opacity: 0;
+	  animation: intro 6s ease-out 1s;
+  }
+  
+  .logo {
+    opacity: 0;
+    animation: logo 9s ease-out 9s; 
+    
+    svg {
+      width: inherit;
+    }
+  }
+  
+  .titles {
+    $titles-width: 14.65em;
+    width: $titles-width;
+    margin: 0 0 0 (- $titles-width / 2);
+    top: auto;
+    bottom: 0;
+  	height: 50em;
+  	font-size: 350%;
+  	text-align: justify;
+	  overflow: hidden;
+    transform-origin: 50% 100%;
+    @include transform(perspective(300px) rotateX(25deg));
+  
+    > div {
+	    position: absolute;
+	    top: 100%;
+	    animation: titles 81s linear 13s;
+    
+      > p {
+	      margin: 1.35em 0 1.85em 0;
+        line-height: 1.35em;
+        
+        @include backface-visibility(hidden);
+      }
+    }
+  }
+}
+
+@keyframes intro {
+  0% {
+    opacity: 0;
+  }  
+	20% { 
+    opacity: 1; 
+  }
+	90% { 
+    opacity: 1; 
+  }
+	100% { 
+    opacity: 0;
+  }
+}
+
+@keyframes logo {
+	0% { 
+    $logo-width: 18em;
+  	width: $logo-width;
+    margin: (- $logo-width / 2) 0 0 (- $logo-width / 2);
+    
+    @include transform(scale(2.75)); 
+    opacity: 1; 
+  }
+	50% { 
+    opacity: 1; 
+    
+    $logo-width: 18em;
+  	width: $logo-width;
+    margin: (- $logo-width / 2) 0 0 (- $logo-width / 2);
+  }
+	100% { 
+    @include transform(scale(.1)); 
+    opacity: 0;
+    
+    $logo-width: 18em;
+  	width: $logo-width;
+    margin: (- $logo-width / 2) 0 0 (- $logo-width / 2);
+  }
+}
+
+@keyframes titles {
+	0% { 
+    top: 100%; 
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+	100% { 
+    top: 20%; 
+    opacity: 0;
+  }
+}</style>
   </head>
   <body>
 <article class="starwars">
